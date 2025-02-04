@@ -36,8 +36,8 @@ function main()
     @info "The number of players per game is: " player_per_game
 
     played_flag = zeros(num_of_players, num_of_games)
-    output = fill("-", Int(num_of_groups * max_player_per_game), num_of_games + 1)
-    game_list = fill("-", num_of_groups, num_of_games + 1)
+    output = fill("-", sum(player_per_game) + 1, num_of_games + 1)
+    game_list = fill("-", num_of_groups + 1, num_of_games + 1)
 
     for group_id in 1:num_of_groups
         start_id = 0
@@ -45,8 +45,8 @@ function main()
             start_id = sum(player_per_game[1:group_id-1])
         end
         for player_id in 1:player_per_game[group_id]
-            output[start_id + player_id, 1] = "Group " * string(group_id)
-            game_list[group_id, 1] = "Group " * string(group_id)
+            output[start_id + player_id + 1, 1] = "Group " * string(group_id)
+            game_list[group_id + 1, 1] = "Group " * string(group_id)
         end
     end
 
@@ -57,6 +57,8 @@ function main()
         played_flag = zeros(num_of_players, num_of_games)
 
         for round_id in 1:num_of_games
+            output[1, round_id + 1] = "Round " * string(round_id)
+            game_list[1, round_id + 1] = "Round " * string(round_id)
             games_filtered = Vector{Int64}(1:num_of_games)
             player_in_round = Vector{Int64}(1:num_of_players)
             for group_id in 1:num_of_groups
@@ -82,13 +84,13 @@ function main()
                 if group_id != 1
                     start_id = sum(player_per_game[1:group_id-1])
                 end
-                count = 0
+                count = 1
                 for player_id in player_list
                     played_flag[player_id, game_id] = 1
                     deleteat!(player_in_round, findall(x -> x == player_id, player_in_round))
                     count += 1
                     output[start_id + count, round_id + 1] = player[player_id]
-                    game_list[group_id, round_id +1] = games[game_id]
+                    game_list[group_id+1, round_id +1] = games[game_id]
                 end
                 count = 0
                 player_list = []
